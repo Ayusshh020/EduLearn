@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 
 const STORAGE_KEY = "edulearn:v1";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 
 const modules = [
   {
@@ -235,7 +236,7 @@ function App() {
     const targetCourseId = state.profile.courseId || "react-js";
     
     setIsLoading(true);
-    fetch(`http://localhost:5001/api/data?courseId=${targetCourseId}`)
+    fetch(`${API_BASE_URL}/api/data?courseId=${targetCourseId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Server communication error");
         return res.json();
@@ -313,7 +314,7 @@ function App() {
       debounceTimeoutRef.current = setTimeout(() => {
         const finalPatch = pendingPatchRef.current;
         pendingPatchRef.current = {};
-        fetch("http://localhost:5001/api/state", {
+        fetch(`${API_BASE_URL}/api/state`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(finalPatch),
@@ -343,7 +344,7 @@ function App() {
       } catch (e) {}
       return next;
     });
-    fetch("http://localhost:5001/api/state/video-progress", {
+    fetch(`${API_BASE_URL}/api/state/video-progress`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lessonId, seconds: Number(seconds) })
@@ -357,7 +358,7 @@ function App() {
 
   const submitQuiz = () => {
     syncState({ quizSubmitted: true });
-    fetch("http://localhost:5001/api/gradebook", {
+    fetch(`${API_BASE_URL}/api/gradebook`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -378,7 +379,7 @@ function App() {
   };
 
   const addForumQuestion = (lessonId, questionTitle) => {
-    fetch("http://localhost:5001/api/forum/thread", {
+    fetch(`${API_BASE_URL}/api/forum/thread`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lessonId, title: questionTitle })
@@ -397,7 +398,7 @@ function App() {
   };
 
   const addForumReply = (lessonId, threadId, text) => {
-    fetch("http://localhost:5001/api/forum/reply", {
+    fetch(`${API_BASE_URL}/api/forum/reply`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lessonId, threadId, author: state.profile.name, text })
@@ -416,7 +417,7 @@ function App() {
   };
 
   const deleteForumThread = (lessonId, threadId) => {
-    fetch("http://localhost:5001/api/forum/thread/delete", {
+    fetch(`${API_BASE_URL}/api/forum/thread/delete`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lessonId, threadId })
@@ -436,7 +437,7 @@ function App() {
 
   const handleReset = () => {
     if (window.confirm("Are you sure you want to reset all course progress?")) {
-      fetch("http://localhost:5001/api/reset", { method: "POST" })
+      fetch(`${API_BASE_URL}/api/reset`, { method: "POST" })
         .then((res) => res.json())
         .then((data) => {
           setBackendGradebook(data.db.baseGradebook);
