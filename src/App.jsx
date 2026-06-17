@@ -437,6 +437,13 @@ function App() {
 
   const handleReset = () => {
     if (window.confirm("Are you sure you want to reset all course progress?")) {
+      // Clear any pending debounced sync operations and patch queues
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+        debounceTimeoutRef.current = null;
+      }
+      pendingPatchRef.current = {};
+
       fetch(`${API_BASE_URL}/api/reset`, { method: "POST" })
         .then((res) => res.json())
         .then((data) => {
