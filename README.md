@@ -2,6 +2,8 @@
 
 A fully functional, retro-brutalist course control panel designed for students to track course progress, resume playback, take quizzes, review grade reports, and ask questions.
 
+**Live Demo**: [https://edu-learn-mocha.vercel.app/](https://edu-learn-mocha.vercel.app/)
+
 Built as a college project MVP for the React JS Semester II course control study.
 
 ---
