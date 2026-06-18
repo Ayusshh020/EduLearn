@@ -26,9 +26,11 @@ import {
   Video,
 } from "lucide-react";
 
+// Local storage key and API endpoint configuration for state persistence
 const STORAGE_KEY = "edulearn:v1";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 
+// Hardcoded default syllabus data fallback when API is unreachable
 const modules = [
   {
     id: "m1",
@@ -109,6 +111,7 @@ const modules = [
   },
 ];
 
+// Default quiz questions for student self-assessments
 const quizQuestions = [
   {
     id: "q1",
@@ -136,6 +139,7 @@ const quizQuestions = [
   },
 ];
 
+// Base mockup gradebook data populated upon dashboard initialization
 const baseGradebook = [
   ["React Warmup", "Module 1", "Jan 18", 84, "Passed"],
   ["JSX Check", "Module 1", "Jan 21", 91, "Passed"],
@@ -156,6 +160,7 @@ const baseGradebook = [
   status,
 }));
 
+// Thread subjects mapping to lessons for the community Q&A section
 const forumThreads = {
   l1: ["How will lesson progress be calculated?", "Can badges be reset for demo?"],
   l2: ["When should I split a component?", "Do props update automatically?"],
@@ -166,6 +171,7 @@ const forumThreads = {
   l7: ["Which features matter most in the final demo?", "How do I explain access permissions?"],
 };
 
+// Default baseline student state structure
 const defaultState = {
   isLoggedIn: false,
   profileReady: false,
@@ -186,6 +192,7 @@ const defaultState = {
   activeLessonId: "l2",
 };
 
+// Retrieves initial student state by merging defaults with localStorage cache
 function getInitialState() {
   try {
     const savedTheme = localStorage.getItem("edulearn:theme") || "light";
@@ -199,18 +206,21 @@ function getInitialState() {
   }
 }
 
+// Utility to format raw seconds into a readable MM:SS layout
 function formatTime(seconds = 0) {
   const minutes = Math.floor(seconds / 60);
   const rest = seconds % 60;
   return `${minutes}:${String(rest).padStart(2, "0")}`;
 }
 
+// Flat-maps all syllabus lessons from the module structures
 function getAllLessons() {
   return modules.flatMap((module) =>
     module.lessons.map((lesson) => ({ ...lesson, moduleTitle: module.title, moduleId: module.id })),
   );
 }
 
+// Main App container: coordinates state syncing, backend requests, and tab routing
 function App() {
   const [state, setState] = useState(getInitialState);
   const [backendModules, setBackendModules] = useState([]);
@@ -566,6 +576,7 @@ function App() {
   );
 }
 
+// Outer Shell wrapper component that handles global layouts and theme selection toggling
 function Shell({ children, state, updateState }) {
   return (
     <div className="page">
@@ -581,6 +592,7 @@ function Shell({ children, state, updateState }) {
   );
 }
 
+// First screen shown to anonymous users, promoting features with mocked visual cards
 function LoginHero({ onStart, progress }) {
   return (
     <section className="hero-card">
@@ -644,6 +656,7 @@ function LoginHero({ onStart, progress }) {
   );
 }
 
+// Floating widgets displayed inside the LoginHero stage
 function FloatingWidget({ className, title, icon, children }) {
   return (
     <div className={`floating-widget ${className}`}>
@@ -653,6 +666,7 @@ function FloatingWidget({ className, title, icon, children }) {
   );
 }
 
+// Enrollment setup screen allowing user to input initial profile info and select a course
 function ProfileSetup({ state, updateState }) {
   const [profile, setProfile] = useState(state.profile);
   const coursesOptions = [
@@ -719,6 +733,7 @@ function ProfileSetup({ state, updateState }) {
   );
 }
 
+// Sidebar navigation component presenting profile quick-stats, tab routing buttons, and cumulative progress
 function Sidebar({ state, activeTab, setActiveTab, progress, badges }) {
   const navItems = [
     ["dashboard", "Dashboard", BarChart3],
@@ -763,6 +778,7 @@ function Sidebar({ state, activeTab, setActiveTab, progress, badges }) {
   );
 }
 
+// Top navigation header bar featuring title info, progress indicators, search bar, and reset capabilities
 function Topbar({ state, updateState, progress, onReset }) {
   return (
     <header className="topbar">
@@ -788,6 +804,7 @@ function Topbar({ state, updateState, progress, onReset }) {
   );
 }
 
+// Primary student dashboard displaying performance indicators, resume buttons, unlocked badges, and grade highlights
 function Dashboard({ progress, completedCount, allLessons, activeLesson, badges, gradebook, setActiveTab }) {
   const average = gradebook.length > 0 
     ? Math.round(gradebook.reduce((sum, row) => sum + row.score, 0) / gradebook.length) 
@@ -843,6 +860,7 @@ function Dashboard({ progress, completedCount, allLessons, activeLesson, badges,
   );
 }
 
+// Metric card block for key stats on the dashboard
 function MetricCard({ label, value, icon }) {
   return (
     <article className="metric-card">
@@ -853,6 +871,7 @@ function MetricCard({ label, value, icon }) {
   );
 }
 
+// Lessons workspace component containing the sidebar module tree and active video player
 function Lessons({
   state,
   updateState,
@@ -1077,6 +1096,7 @@ function Lessons({
   );
 }
 
+// Access center buttons displayed under the active lesson video
 function AccessButton({ unlocked, icon, title, detail, onClick }) {
   return (
     <button className={`access-card ${unlocked ? "unlocked" : ""}`} disabled={!unlocked} onClick={onClick}>
@@ -1087,6 +1107,7 @@ function AccessButton({ unlocked, icon, title, detail, onClick }) {
   );
 }
 
+// Guided step-by-step quiz screen evaluating user understanding
 function Quiz({ state, quizStep, setQuizStep, answerQuiz, quizScore, quizPercent, updateState, submitQuiz, quizQuestions }) {
   if (!quizQuestions || quizQuestions.length === 0) return null;
   const current = quizQuestions[quizStep];
@@ -1165,6 +1186,7 @@ function Quiz({ state, quizStep, setQuizStep, answerQuiz, quizScore, quizPercent
   );
 }
 
+// Gradebook manager enabling table searches and custom sort orders
 function Gradebook({ gradebook }) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("date");
@@ -1239,6 +1261,7 @@ function Gradebook({ gradebook }) {
   );
 }
 
+// Modular table element rendering list metrics within the Gradebook component
 function GradeTable({ rows, compact = false, sortBy = "", sortOrder = "", onSort = null }) {
   const renderHeader = (label, field) => {
     if (compact || !onSort) {
@@ -1293,6 +1316,7 @@ function GradeTable({ rows, compact = false, sortBy = "", sortOrder = "", onSort
   );
 }
 
+// Lesson Q&A board containing multiple nested query comment loops
 function Forum({ activeLesson, threads, onAddThread, onAddReply, onDeleteThread }) {
   const [question, setQuestion] = useState("");
   const [expandedThreadId, setExpandedThreadId] = useState(null);
@@ -1416,6 +1440,7 @@ function Forum({ activeLesson, threads, onAddThread, onAddReply, onDeleteThread 
   );
 }
 
+// Profile details setup pane permitting dynamic user-profile customization and enrollment updates
 function Profile({ state, updateState }) {
   const [profile, setProfile] = useState(state.profile);
   const coursesOptions = [
