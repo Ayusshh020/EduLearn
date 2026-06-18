@@ -1,3 +1,4 @@
+// EduLearn Dashboard Application - Main Entry Component
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import {
   Award,
